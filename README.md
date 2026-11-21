@@ -41,15 +41,15 @@ Clone the repo, then add it to `~/.config/opencode/opencode.json(c)`:
 
 ```jsonc
 {
-  "$schema": "https://opencode.ai/config.json",
-  "plugins": [
-    {
-      "package": "/abs/path/to/barn-opencode-jarvis",
-      "options": {
-        "jarvisDir": "/abs/path/to/barn-claude-jarvis"
-      }
-    }
-  ]
+    "$schema": "https://opencode.ai/config.json",
+    "plugins": [
+        {
+            "package": "/abs/path/to/barn-opencode-jarvis",
+            "options": {
+                "jarvisDir": "/abs/path/to/barn-claude-jarvis",
+            },
+        },
+    ],
 }
 ```
 
@@ -67,6 +67,8 @@ up in `/plugins`.
 ```shell
 npm install
 npm run typecheck
+npm run lint
+npm run format:check
 ```
 
 The plugin imports `@opencode/plugin` for types only; OpenCode resolves it at
