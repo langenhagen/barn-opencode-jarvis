@@ -1,0 +1,22 @@
+{
+  "name": "barn-opencode-jarvis",
+  "version": "0.1.0",
+  "description": "OpenCode server plugin that speaks a standalone TTS version of each reply with qtts",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./plugins/jarvis.ts"
+  },
+  "files": ["plugins"],
+  "engines": {
+    "opencode": ">=2.0.0"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@opencode/plugin": "latest",
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.2"
+  }
+}
