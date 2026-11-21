@@ -7,9 +7,8 @@ Friday mode.
 
 While Friday mode is on, the on-screen reply stays normal. A prompt hook tells
 the model to add one last tool call, `jarvis_speak`, carrying a TTS-friendly
-version of the reply. The tool writes that text to
-`~/.cache/barn-opencode-jarvis/last-message.txt` and starts `qtts` on the file.
-No second model call is needed.
+version of the reply. The tool pipes that text straight into `qtts`; no message
+file is involved. No second model call is needed.
 
 ## Triggering The Plugin
 
@@ -80,7 +79,8 @@ directly.
 - The tool starts `qtts` detached and does not wait for playback to end.
 - If the model ignores the instruction, nothing is spoken. There is no
   automatic fallback from the last on-screen reply.
-- Two sessions speaking at once share one message file and can overlap.
+- Each call pipes its own text, so concurrent sessions cannot overwrite a
+  shared message file.
 
 ## License
 
