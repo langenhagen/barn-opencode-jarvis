@@ -2,7 +2,7 @@
 //
 // A prompt hook toggles the mode with "friday" and "friday off" and, while the
 // mode is on, tells the model to finish each reply with a jarvis_speak tool
-// call. The tool writes that standalone version to a file and starts qtts.
+// call. The tool pipes that standalone version straight into qtts.
 // This mirrors the Claude plugin's Friday mode without a second model call.
 //
 // author: andreasl
@@ -23,10 +23,10 @@ function normalizePrompt(text: string): string {
     return text.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "")
 }
 
-function fridayRule(messageFile: string): string {
+function fridayRule(): string {
     return [
         "Friday mode: keep the on-screen reply full and detailed.",
-        `As your last tool call before the final reply text, call ${TOOL_NAME} with a short, standalone spoken version of this reply; the tool writes it to ${messageFile} and reads it aloud.`,
+        `As your last tool call before the final reply text, call ${TOOL_NAME} with a short, standalone spoken version of this reply; the tool pipes it into qtts and reads it aloud.`,
         "That version must make sense without seeing the screen and be shorter than the on-screen reply: a yes/no, or 1-3 sentences of about 15 words each.",
         "Draft it, then cut about a sixth: drop every clause, number and aside the listener does not need.",
         'Use TTS-friendly prose naming things concretely (which skill, line, PR, and what it does), never vague refs like "the draft", "one line" or "that fix"; brief paraphrases are fine.',
@@ -61,7 +61,7 @@ export default Plugin.define({
             }
 
             if (mode === MODE_ON) {
-                event.prompt.text = `${event.prompt.text.trimEnd()}\n\n${fridayRule(state.messageFile)}`
+                event.prompt.text = `${event.prompt.text.trimEnd()}\n\n${fridayRule()}`
             }
         })
 
@@ -88,7 +88,6 @@ export default Plugin.define({
                     if (!text) return { content: "No text to speak." }
 
                     const voice = await loadVoice(jarvisDir)
-                    await state.writeMessage(text)
 
                     const child = spawn(
                         qttsPath,
@@ -99,10 +98,17 @@ export default Plugin.define({
                             voice.transcript,
                             "--prebuffer",
                             String(voice.prebufferSeconds),
-                            state.messageFile,
                         ],
-                        { stdio: "ignore", detached: true },
+                        { stdio: ["pipe", "ignore", "ignore"], detached: true },
                     )
+                    // qtts can exit before it reads everything, for example when its server
+                    // fails to start; EPIPE is then expected and must not crash the plugin.
+                    child.stdin.on("error", (error: NodeJS.ErrnoException) => {
+                        if (error.code !== "EPIPE") {
+                            console.error(`[barn-opencode-jarvis] qtts stdin failed: ${error.message}`)
+                        }
+                    })
+                    child.stdin.end(`${text}\n`)
                     child.on("error", (error: Error) => {
                         console.error(`[barn-opencode-jarvis] qtts failed: ${error.message}`)
                     })

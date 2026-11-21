@@ -9,17 +9,14 @@ import path from "node:path"
 
 export interface JarvisState {
     readonly modeFile: string
-    readonly messageFile: string
     readMode(): Promise<string | undefined>
     writeMode(mode: string): Promise<void>
     clearMode(): Promise<void>
-    writeMessage(text: string): Promise<void>
 }
 
 export function createState(): JarvisState {
     const stateDir = path.join(os.homedir(), ".cache", "barn-opencode-jarvis")
     const modeFile = path.join(stateDir, "mode")
-    const messageFile = path.join(stateDir, "last-message.txt")
 
     async function ensureDir(): Promise<void> {
         await mkdir(stateDir, { recursive: true })
@@ -27,7 +24,6 @@ export function createState(): JarvisState {
 
     return {
         modeFile,
-        messageFile,
         async readMode() {
             try {
                 const value = (await readFile(modeFile, "utf8")).trim()
@@ -43,10 +39,6 @@ export function createState(): JarvisState {
         },
         async clearMode() {
             await rm(modeFile, { force: true })
-        },
-        async writeMessage(text) {
-            await ensureDir()
-            await writeFile(messageFile, `${text}\n`, "utf8")
         },
     }
 }
