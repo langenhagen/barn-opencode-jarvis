@@ -22,11 +22,23 @@ uses `jarvis_speak` directly, even when the mode is off.
 
 ## Configuration
 
-The plugin reads `voice_name` and `qtts_prebuffer_seconds` from
-`barn-claude-jarvis/config.sh` and the voice samples from its `voices/`
-directory. Change the voice there, once, for both Claude and OpenCode.
-An unknown name falls back to `jeff`. The config file is re-read on every
-spoken reply, so edits take effect immediately.
+Local settings live in [`config.sh`](config.sh), which the plugin reads on
+every spoken reply. The file is git-ignored, so changes stay out of version
+control. To create it, copy the sample:
+
+```bash
+cp config.sh.sample config.sh
+```
+
+It sets:
+
+- `voice_name`: the TTS voice, a subdirectory of the `barn-claude-jarvis`
+  clone's `voices/`. A name without a matching directory falls back to `jeff`.
+- `qtts_prebuffer_seconds`: how much audio `qtts` buffers before playback.
+  Defaults to `0`.
+
+Without `config.sh`, the defaults apply. Voice samples still come from the
+`barn-claude-jarvis` clone, so Claude and OpenCode can pick different voices.
 
 OpenCode plugin options:
 

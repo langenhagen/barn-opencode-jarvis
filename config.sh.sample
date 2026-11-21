@@ -1,0 +1,15 @@
+# Local settings for barn-opencode-jarvis. Read by plugins/voice.ts.
+#
+# Copy this file to config.sh next to it. config.sh is not under version
+# control, so local changes stay out of the repository.
+#
+# author: andreasl
+
+# shellcheck shell=bash
+
+# TTS voice: a subdirectory of the barn-claude-jarvis voices/ directory.
+# Unknown names fall back to jeff.
+voice_name="jeff"
+
+# qtts --prebuffer seconds. 0 starts playback with the first chunk.
+qtts_prebuffer_seconds=0

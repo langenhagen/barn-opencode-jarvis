@@ -2,3 +2,6 @@ node_modules/
 *.log
 *.swp
 .DS_Store
+
+# Local settings, not under version control. See config.sh.sample.
+/config.sh

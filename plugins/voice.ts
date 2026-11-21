@@ -1,13 +1,15 @@
-// Read the TTS voice and qtts prebuffer from barn-claude-jarvis, so both
-// Claude and OpenCode share one voice configuration and one voice directory.
+// Read local TTS settings from this repo's config.sh. Voice samples stay in
+// barn-claude-jarvis, so both plugins share the same recordings.
 //
 // author: andreasl
 
 import { access, readFile } from "node:fs/promises"
 import os from "node:os"
 import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 const FALLBACK_VOICE = "jeff"
+const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 
 export interface VoiceSettings {
     readonly voiceName: string
@@ -36,9 +38,9 @@ function readSetting(config: string, key: string): string | undefined {
     return match?.[1]
 }
 
-export async function loadVoice(jarvisDir: string): Promise<VoiceSettings> {
-    const root = expandHome(jarvisDir)
-    const configFile = path.join(root, "config.sh")
+export async function loadVoice(voicesDir: string): Promise<VoiceSettings> {
+    const root = expandHome(voicesDir)
+    const configFile = path.join(PLUGIN_ROOT, "config.sh")
     let configured = FALLBACK_VOICE
     let prebufferSeconds = 0
 
