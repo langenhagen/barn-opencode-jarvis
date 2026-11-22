@@ -26,7 +26,7 @@ function normalizePrompt(text: string): string {
 function fridayRule(): string {
     return [
         "Friday mode: keep the on-screen reply full and detailed.",
-        `As your last tool call before the final reply text, call ${TOOL_NAME} with a short, standalone spoken version of this reply; the tool pipes it into qtts and reads it aloud.`,
+        `As your last tool call before the final reply text, use the execute tool to run await tools.${TOOL_NAME}({ text: "..." }) with a short, standalone spoken version of this reply; the tool pipes it into qtts and reads it aloud.`,
         "That version must make sense without seeing the screen and be shorter than the on-screen reply: a yes/no, or 1-3 sentences of about 15 words each.",
         "Draft it, then cut about a sixth: drop every clause, number and aside the listener does not need.",
         'Use TTS-friendly prose naming things concretely (which skill, line, PR, and what it does), never vague refs like "the draft", "one line" or "that fix"; brief paraphrases are fine.',
